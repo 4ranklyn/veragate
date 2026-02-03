@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
           });
 
           const watcherResponse = await ai.models.generateContent({
-            model: "gemini-2.0-flash",
+            model: "gemini-3-flash-preview",
             contents: [
               {
                 role: "user",
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
           });
 
           const auditorResponse = await ai.models.generateContent({
-            model: "gemini-2.0-pro-exp-02-05",
+            model: "gemini-3-pro-preview",
             contents: [
               {
                 role: "user",
