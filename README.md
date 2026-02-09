@@ -102,6 +102,35 @@ npm start
 
 Open [http://localhost:3000](http://localhost:3000) to access the dashboard.
 
+### 🐳 Docker Deployment
+
+Build and run with Docker:
+
+```bash
+# Build the image
+docker build -t veragate .
+
+# Run the container
+docker run -p 3000:3000 -e GEMINI_API_KEY=your_api_key_here veragate
+```
+
+Or use docker-compose:
+
+```yaml
+# docker-compose.yml
+services:
+  veragate:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+```
+
+```bash
+docker-compose up
+```
+
 ---
 
 ## 📖 Usage Guide
@@ -160,8 +189,9 @@ veragate/
 │   └── types/
 │       └── forensic.ts           # TypeScript interfaces
 ├── public/                       # Static assets
+├── Dockerfile                    # Multi-stage Docker build
 ├── .env.example                  # Environment template
-├── next.config.ts                # Next.js configuration
+├── next.config.ts                # Next.js configuration (standalone output)
 ├── package.json                  # Dependencies
 └── README.md                     # This file
 ```
