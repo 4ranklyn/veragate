@@ -1,91 +1,178 @@
-# VeraGate: Multimodal Forensic Audit Engine
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16.1.6-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Gemini-3-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini 3" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+</p>
 
-AI-powered forensic analysis that detects contradictions between video evidence and technical documentation using Google's Gemini 3.
+# VeraGate
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black)
-![Gemini](https://img.shields.io/badge/Gemini-3-blue)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+> **AI-powered multimodal forensic analysis engine** that detects contradictions between video evidence and technical documentation using Google's Gemini 3.
 
-## Features
+VeraGate leverages a dual-agent architecture to perform deep forensic audits: **The Watcher** extracts observations from video, while **The Auditor** cross-references findings against PDF documentation to identify discrepancies.
 
-- 🎥 **Video Analysis** - Upload video files for AI-powered OCR and transcription
-- 📄 **PDF Cross-Reference** - Full document ingestion (up to 1M tokens, no RAG)
-- 🔍 **Forensic Audit** - Detect spatial, temporal, factual, and specification errors
-- 🧠 **AI Reasoning** - Real-time thinking log shows AI decision process
-- 📊 **Contradiction Feed** - Timestamped issues with severity indicators
+---
 
-## Architecture
+## ✨ Features
+
+| Feature                    | Description                                                                       |
+| -------------------------- | --------------------------------------------------------------------------------- |
+| 🎥 **Video Analysis**      | Upload video files for AI-powered OCR, speech transcription, and spatial analysis |
+| 📄 **PDF Cross-Reference** | Full document ingestion using Gemini's 1M token context window (no RAG required)  |
+| 🔍 **Forensic Audit**      | Detect spatial, temporal, factual, and specification contradictions               |
+| 🧠 **AI Reasoning**        | Real-time thinking log shows the AI's decision-making process                     |
+| 📊 **Contradiction Feed**  | Timestamped issues with severity indicators and confidence scores                 |
+| ⚡ **Streaming Results**   | Server-Sent Events (SSE) for real-time analysis updates                           |
+
+---
+
+## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Frontend (React + Tailwind)               │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────┐   │
-│  │  Dropzone   │  │ Thinking Log │  │ Contradiction Feed│   │
-│  └─────────────┘  └──────────────┘  └───────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    Frontend (React 19 + Tailwind)               │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐   │
+│  │  Dropzone   │  │ Thinking Log │  │ Contradiction Feed    │   │
+│  └─────────────┘  └──────────────┘  └───────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ SSE Stream
+┌─────────────────────────────────────────────────────────────────┐
+│                    Backend (Next.js 16 API Routes)              │
+│  ┌──────────────────────┐    ┌────────────────────────────┐     │
+│  │ Agent 1: The Watcher │───▶│ Agent 2: The Auditor       │     │
+│  │ gemini-3-flash       │    │ gemini-3-pro (thinking:high)│     │
+│  │ Video OCR/Transcript │    │ Cross-Reference Analysis   │     │
+│  └──────────────────────┘    └────────────────────────────┘     │
+└─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Backend (Next.js API)                     │
-│  ┌─────────────────────┐  ┌─────────────────────────────┐   │
-│  │ Agent 1: The Watcher│  │ Agent 2: The Auditor        │   │
-│  │ Gemini 3 Flash      │  │ Gemini 3 Pro (thinking:high)│   │
-│  │ Video OCR           │──▶│ Cross-Reference Analysis    │   │
-│  └─────────────────────┘  └─────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  Google Generative AI API                    │
-│         Files API  │  generateContent  │  Thinking Mode      │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                   Google Generative AI API                      │
+│         Files API  │  generateContent  │  Thinking Mode         │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Quick Start
+### Dual-Agent System
 
-### 1. Install Dependencies
+| Agent              | Model                    | Purpose                                             |
+| ------------------ | ------------------------ | --------------------------------------------------- |
+| **The Watcher** 👁️ | `gemini-3-flash-preview` | Fast video OCR, transcription, and spatial analysis |
+| **The Auditor** 🧠 | `gemini-3-pro-preview`   | Deep forensic analysis with extended thinking mode  |
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- Google AI Studio API Key ([Get one here](https://aistudio.google.com/apikey))
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/veragate.git
+cd veragate
+
+# Install dependencies
 npm install
-```
 
-### 2. Configure API Key
-
-```bash
+# Configure environment
 cp .env.example .env.local
 ```
 
 Edit `.env.local` and add your Gemini API key:
 
-```
+```env
 GEMINI_API_KEY=your_api_key_here
 ```
 
-> Get your API key at [Google AI Studio](https://aistudio.google.com/apikey)
-
-### 3. Run Development Server
+### Running the Application
 
 ```bash
+# Development server
 npm run dev
+
+# Production build
+npm run build
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) to access the dashboard.
 
-### 4. Usage
+---
 
-1. **Upload Evidence** - Drag a video file and PDF document to the dropzone
-2. **Start Analysis** - Click "Begin Forensic Analysis"
-3. **Watch AI Thinking** - See real-time reasoning in the Thinking Log
-4. **Review Contradictions** - Click any issue for detailed reasoning
+## 📖 Usage Guide
 
-## Gemini Models Used
+1. **Upload Evidence** — Drag and drop a video file and PDF document to the dropzone
+2. **Begin Analysis** — Click "Begin Forensic Analysis" to start the audit
+3. **Watch AI Thinking** — Monitor real-time reasoning in the Thinking Log panel
+4. **Review Contradictions** — Click any identified issue for detailed reasoning
 
-| Agent       | Model                      | Purpose                              |
-| ----------- | -------------------------- | ------------------------------------ |
-| The Watcher | `gemini-2.0-flash`         | Fast video OCR and transcription     |
-| The Auditor | `gemini-2.0-pro-exp-02-05` | Deep forensic analysis with thinking |
+---
 
-### Thinking Configuration
+## 🔬 Contradiction Types
+
+| Type              | Icon | Description                          | Example                                    |
+| ----------------- | ---- | ------------------------------------ | ------------------------------------------ |
+| **Spatial**       | 🗺️   | Physical positions don't match specs | Component installed in wrong location      |
+| **Temporal**      | ⏰   | Time indicators contradict claims    | Shadows indicate different time of day     |
+| **Factual**       | 📋   | Information directly conflicts       | Different quantities in video vs. document |
+| **Specification** | 📐   | Technical specs violated             | Dimensions don't match blueprint           |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer         | Technology                          |
+| ------------- | ----------------------------------- |
+| **Framework** | Next.js 16.1.6 (App Router)         |
+| **UI**        | React 19, Tailwind CSS 4, shadcn/ui |
+| **Animation** | Framer Motion                       |
+| **AI SDK**    | @google/genai                       |
+| **Streaming** | Server-Sent Events (SSE)            |
+| **Language**  | TypeScript 5                        |
+
+---
+
+## 📁 Project Structure
+
+```
+veragate/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── analyze/
+│   │   │       └── route.ts      # SSE streaming API endpoint
+│   │   ├── layout.tsx            # Root layout with metadata
+│   │   ├── page.tsx              # Dashboard page (bento grid)
+│   │   └── globals.css           # Global styles
+│   ├── components/
+│   │   ├── dropzone.tsx          # File upload component
+│   │   ├── thinking-log.tsx      # AI reasoning display
+│   │   ├── contradiction-feed.tsx # Issue list with severity
+│   │   ├── reasoning-replay.tsx  # Detail modal for contradictions
+│   │   └── ui/                   # shadcn/ui components
+│   ├── lib/
+│   │   └── utils.ts              # Utility functions
+│   └── types/
+│       └── forensic.ts           # TypeScript interfaces
+├── public/                       # Static assets
+├── .env.example                  # Environment template
+├── next.config.ts                # Next.js configuration
+├── package.json                  # Dependencies
+└── README.md                     # This file
+```
+
+---
+
+## ⚙️ Configuration
+
+### Thinking Mode Configuration
+
+The Auditor agent uses Gemini 3's extended thinking capability for deep forensic analysis:
 
 ```typescript
 config: {
@@ -96,51 +183,57 @@ config: {
 }
 ```
 
-## Contradiction Types
+### Supported File Types
 
-| Type             | Description                          |
-| ---------------- | ------------------------------------ |
-| 🗺️ Spatial       | Physical positions don't match specs |
-| ⏰ Temporal      | Time indicators contradict claims    |
-| 📋 Factual       | Information directly conflicts       |
-| 📐 Specification | Technical specs violated             |
+| Type     | Formats        | Max Size            |
+| -------- | -------------- | ------------------- |
+| Video    | MP4, WebM, MOV | 2GB (via Files API) |
+| Document | PDF            | 50MB                |
 
-## Tech Stack
+---
 
-- **Framework**: Next.js 16 (App Router)
-- **Styling**: Tailwind CSS + shadcn/ui
-- **Animation**: Framer Motion
-- **AI SDK**: @google/genai
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── api/analyze/route.ts   # SSE streaming API
-│   ├── layout.tsx             # Root layout
-│   └── page.tsx               # Dashboard page
-├── components/
-│   ├── dropzone.tsx           # File upload
-│   ├── thinking-log.tsx       # AI reasoning display
-│   ├── contradiction-feed.tsx # Issue list
-│   └── reasoning-replay.tsx   # Detail modal
-└── types/
-    └── forensic.ts            # TypeScript interfaces
-```
-
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Hydration Warning in Browser
 
-If you see hydration errors mentioning `bis_skin_checked`, this is caused by browser extensions (like Bitdefender) modifying the DOM. Solutions:
+If you see hydration errors mentioning `bis_skin_checked`, this is caused by browser extensions (like Bitdefender) modifying the DOM.
+
+**Solutions:**
 
 1. Test in Incognito mode (extensions disabled)
 2. Disable the browser extension for localhost
 3. Use a different browser
 
-This is not a bug in the application.
+> This is not a bug in the application.
 
-## License
+### API Key Issues
 
-MIT
+If you see "GEMINI_API_KEY environment variable is not set":
+
+1. Ensure `.env.local` exists in the project root
+2. Verify the key is correctly formatted (no quotes needed)
+3. Restart the development server after changing env vars
+
+---
+
+## 📜 License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+<p align="center">
+  Built with ❤️ using <a href="https://ai.google.dev/">Google Gemini 3</a>
+</p>
